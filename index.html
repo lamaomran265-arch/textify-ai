@@ -1,142 +1,198 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title id="pageTitle">Textify OCR - Smart Image Translator</title>
-  <meta name="description" content="Free online Image to Text converter (OCR) and instant translator. Extract text from images and convert to PDF easily.">
-  <meta name="keywords" content="Textify OCR, image to text, OCR online, translate image text, extract text from photo, image to pdf">
-  
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <style>
-    body { font-family: system-ui, -apple-system, sans-serif; background: #f4f6f8; margin: 0; padding: 20px; }
-    .card { max-width: 650px; margin: auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
-    h2 { text-align: center; color: #1e293b; margin-top: 0; }
-    .input-group { margin-bottom: 15px; }
-    label { display: block; margin-bottom: 5px; font-weight: bold; color: #475569; }
-    input[type="file"], select, button { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; box-sizing: border-box; margin-bottom: 10px; font-size: 15px; }
-    button { background: #2563eb; color: #fff; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
-    button:hover { background: #1d4ed8; }
-    .secondary-btn { background: #059669; }
-    .secondary-btn:hover { background: #047857; }
-    #status { font-weight: bold; text-align: center; color: #0284c7; margin: 10px 0; }
-    textarea { width: 100%; height: 120px; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; box-sizing: border-box; resize: vertical; margin-bottom: 10px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Textify AI - استخراج النصوص من الصور</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #1e293b;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+        }
+
+        .pro-btn-nav {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            padding: 10px 18px;
+            text-decoration: none;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .pro-btn-nav:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            flex: 1;
+        }
+
+        .hero h2 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: #0f172a;
+        }
+
+        .hero p {
+            color: #64748b;
+            margin-bottom: 25px;
+        }
+
+        .upload-box {
+            border: 2px dashed #cbd5e1;
+            padding: 40px 20px;
+            border-radius: 10px;
+            background-color: #f8fafc;
+            cursor: pointer;
+            margin-bottom: 25px;
+            transition: border-color 0.3s;
+        }
+
+        .upload-box:hover {
+            border-color: #6366f1;
+        }
+
+        .upload-box p {
+            color: #64748b;
+            font-size: 1rem;
+        }
+
+        .btn-submit {
+            background-color: #0F172A;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+        }
+
+        .btn-submit:hover {
+            background-color: #334155;
+        }
+
+        .pricing-section {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .pricing-card {
+            background: #f1f5f9;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            display: inline-block;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .pricing-card h3 {
+            margin-bottom: 10px;
+            color: #1e293b;
+        }
+
+        .pricing-card .price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #6366f1;
+            margin-bottom: 15px;
+        }
+
+        .pricing-card ul {
+            list-style: none;
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        .pricing-card ul li {
+            margin-bottom: 8px;
+            color: #475569;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+    </style>
 </head>
 <body>
 
-<div class="card">
-  <h2 id="mainHeading">Textify OCR - Image to Text & Translator</h2>
-  
-  <div class="input-group">
-    <label id="lblSelectImg">1. Select Image:</label>
-    <input type="file" id="imageInput" accept="image/*">
-  </div>
+    <header>
+        <h1>Textify AI</h1>
+        <a href="https://nowpayments.io/payment/?iid=5939143399" target="_blank" class="pro-btn-nav">⚡ ترقية لـ Pro</a>
+    </header>
 
-  <div class="input-group">
-    <label id="lblImgLang">2. Image Text Language:</label>
-    <select id="ocrLang">
-      <option value="eng">English</option>
-      <option value="ara">Arabic (العربية)</option>
-    </select>
-  </div>
+    <div class="container">
+        <div class="hero">
+            <h2>استخراج النصوص من الصور بالذكاء الاصطناعي</h2>
+            <p>ارفع الصورة واستخرج النص منها بدقة عالية وفي ثوانٍ معدودة</p>
+        </div>
 
-  <button id="btnExtract" onclick="processImage()">Extract Text Now 🚀</button>
-  <div id="status"></div>
+        <div class="upload-box" onclick="document.getElementById('fileInput').click();">
+            <p>اضغط هنا لرفع الصورة أو اسحبها إلى هنا</p>
+            <input type="file" id="fileInput" style="display: none;" accept="image/*">
+        </div>
 
-  <div class="input-group">
-    <label id="lblExtracted">Extracted Text:</label>
-    <textarea id="extractedText" placeholder="Extracted text will appear here..."></textarea>
-  </div>
+        <button class="btn-submit">استخراج النص الآن</button>
 
-  <hr style="margin: 20px 0; border: none; border-top: 1px solid #e2e8f0;">
+        <div class="pricing-section">
+            <div class="pricing-card">
+                <h3>باقة Textify Pro 🚀</h3>
+                <div class="price">10$ / مرة واحدة</div>
+                <ul>
+                    <li>✓ استخراج غير محدود للنصوص</li>
+                    <li>✓ دعم جميع اللغات بدقة عالية</li>
+                    <li>✓ معالجة سريعة وبدون إعلانات</li>
+                    <li>✓ الدفع المباشر بالعملات الرقمية (USDT)</li>
+                </ul>
+                <a href="https://nowpayments.io/payment/?iid=5939143399" target="_blank" class="pro-btn-nav" style="display: block; text-align: center;">اشترك الآن ⚡</a>
+            </div>
+        </div>
+    </div>
 
-  <div class="input-group">
-    <label id="lblTranslateTo">3. Translate To:</label>
-    <select id="targetLang">
-      <option value="en">English</option>
-      <option value="ar">Arabic</option>
-      <option value="fr">French</option>
-      <option value="de">German</option>
-    </select>
-    <button id="btnTranslate" class="secondary-btn" onclick="translateText()">Translate Text 🌐</button>
-  </div>
-
-  <div class="input-group">
-    <label id="lblTranslated">Translated Text:</label>
-    <textarea id="translatedText" placeholder="Translated text will appear here..."></textarea>
-  </div>
-
-  <button id="btnDownload" onclick="downloadPDF()" style="background: #dc2626;">Download as PDF 📄</button>
-</div>
-
-<script>
-  // Detect User Language
-  const userLang = navigator.language || navigator.userLanguage; 
-  if (userLang.startsWith('ar')) {
-    document.documentElement.dir = 'rtl';
-    document.documentElement.lang = 'ar';
-    document.getElementById('mainHeading').innerText = 'Textify OCR - استخراج وترجمة النصوص الذكية';
-    document.getElementById('lblSelectImg').innerText = '1. اختر الصورة:';
-    document.getElementById('lblImgLang').innerText = '2. لغة النص داخل الصورة:';
-    document.getElementById('btnExtract').innerText = 'استخراج النص الآن 🚀';
-    document.getElementById('lblExtracted').innerText = 'النص المستخرج:';
-    document.getElementById('lblTranslateTo').innerText = '3. ترجمة النص إلى:';
-    document.getElementById('btnTranslate').innerText = 'ترجمة النص 🌐';
-    document.getElementById('lblTranslated').innerText = 'النص المترجم:';
-    document.getElementById('btnDownload').innerText = 'تحميل كملف PDF 📄';
-  }
-
-  async function processImage() {
-    const file = document.getElementById('imageInput').files[0];
-    const lang = document.getElementById('ocrLang').value;
-    const status = document.getElementById('status');
-    const output = document.getElementById('extractedText');
-
-    if (!file) return alert('Please select an image first / يرجى اختيار صورة أولاً');
-
-    status.innerText = 'Processing image... / جاري المعالجة...';
-    output.value = '';
-
-    try {
-      const result = await Tesseract.recognize(file, lang);
-      output.value = result.data.text;
-      status.innerText = 'Text extracted successfully! / تم الاستخراج بنجاح!';
-    } catch (err) {
-      status.innerText = 'Error processing image / حدث خطأ أثناء المعالجة.';
-    }
-  }
-
-  async function translateText() {
-    const text = document.getElementById('extractedText').value;
-    const targetLang = document.getElementById('targetLang').value;
-    const output = document.getElementById('translatedText');
-
-    if (!text) return alert('No text to translate / لا يوجد نص لترجمته');
-
-    output.value = 'Translating... / جاري الترجمة...';
-
-    try {
-      const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=autodetect|${targetLang}`);
-      const data = await res.json();
-      output.value = data.responseData.translatedText;
-    } catch (err) {
-      alert('Translation failed / تعذرت الترجمة');
-    }
-  }
-
-  function downloadPDF() {
-    const text = document.getElementById('translatedText').value || document.getElementById('extractedText').value;
-    if (!text) return alert('No text to download / لا يوجد نص لتحميله');
-
-    const element = document.createElement('div');
-    element.style.padding = '20px';
-    element.innerText = text;
-
-    html2pdf().from(element).save('document.pdf');
-  }
-</script>
+    <footer>
+        &copy; 2026 Textify AI. جميع الحقوق محفوظة.
+    </footer>
 
 </body>
 </html>
