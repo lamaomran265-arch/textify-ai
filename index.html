@@ -1,13 +1,16 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>منصة استخراج وترجمة النصوص الذكية</title>
+  <title id="pageTitle">Textify OCR - Smart Image Translator</title>
+  <meta name="description" content="Free online Image to Text converter (OCR) and instant translator. Extract text from images and convert to PDF easily.">
+  <meta name="keywords" content="Textify OCR, image to text, OCR online, translate image text, extract text from photo, image to pdf">
+  
   <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
-    body { font-family: system-ui, sans-serif; background: #f4f6f8; margin: 0; padding: 20px; direction: rtl; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #f4f6f8; margin: 0; padding: 20px; }
     .card { max-width: 650px; margin: auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
     h2 { text-align: center; color: #1e293b; margin-top: 0; }
     .input-group { margin-bottom: 15px; }
@@ -24,68 +27,84 @@
 <body>
 
 <div class="card">
-  <h2>تحويل الصور إلى نصوص وتأطيرها</h2>
+  <h2 id="mainHeading">Textify OCR - Image to Text & Translator</h2>
   
   <div class="input-group">
-    <label>1. اختر الصورة:</label>
+    <label id="lblSelectImg">1. Select Image:</label>
     <input type="file" id="imageInput" accept="image/*">
   </div>
 
   <div class="input-group">
-    <label>2. لغة النص داخل الصورة:</label>
+    <label id="lblImgLang">2. Image Text Language:</label>
     <select id="ocrLang">
-      <option value="ara">العربية (Arabic)</option>
-      <option value="eng">الإنكليزية (English)</option>
+      <option value="eng">English</option>
+      <option value="ara">Arabic (العربية)</option>
     </select>
   </div>
 
-  <button onclick="processImage()">استخراج النص الآن 🚀</button>
+  <button id="btnExtract" onclick="processImage()">Extract Text Now 🚀</button>
   <div id="status"></div>
 
   <div class="input-group">
-    <label>النص المستخرج:</label>
-    <textarea id="extractedText" placeholder="سيظهر النص المستخرج هنا..."></textarea>
+    <label id="lblExtracted">Extracted Text:</label>
+    <textarea id="extractedText" placeholder="Extracted text will appear here..."></textarea>
   </div>
 
   <hr style="margin: 20px 0; border: none; border-top: 1px solid #e2e8f0;">
 
   <div class="input-group">
-    <label>3. ترجمة النص إلى:</label>
+    <label id="lblTranslateTo">3. Translate To:</label>
     <select id="targetLang">
-      <option value="en">الإنكليزية</option>
-      <option value="ar">العربية</option>
-      <option value="fr">الفرنسية</option>
-      <option value="de">الألمانية</option>
+      <option value="en">English</option>
+      <option value="ar">Arabic</option>
+      <option value="fr">French</option>
+      <option value="de">German</option>
     </select>
-    <button class="secondary-btn" onclick="translateText()">ترجمة النص 🌐</button>
+    <button id="btnTranslate" class="secondary-btn" onclick="translateText()">Translate Text 🌐</button>
   </div>
 
   <div class="input-group">
-    <label>النص المترجم:</label>
-    <textarea id="translatedText" placeholder="سيظهر النص المترجم هنا..."></textarea>
+    <label id="lblTranslated">Translated Text:</label>
+    <textarea id="translatedText" placeholder="Translated text will appear here..."></textarea>
   </div>
 
-  <button onclick="downloadPDF()" style="background: #dc2626;">تحميل كملف PDF 📄</button>
+  <button id="btnDownload" onclick="downloadPDF()" style="background: #dc2626;">Download as PDF 📄</button>
 </div>
 
 <script>
+  // Detect User Language
+  const userLang = navigator.language || navigator.userLanguage; 
+  if (userLang.startsWith('ar')) {
+    document.documentElement.dir = 'rtl';
+    document.documentElement.lang = 'ar';
+    document.getElementById('mainHeading').innerText = 'Textify OCR - استخراج وترجمة النصوص الذكية';
+    document.getElementById('lblSelectImg').innerText = '1. اختر الصورة:';
+    document.getElementById('lblImgLang').innerText = '2. لغة النص داخل الصورة:';
+    document.getElementById('btnExtract').innerText = 'استخراج النص الآن 🚀';
+    document.getElementById('lblExtracted').innerText = 'النص المستخرج:';
+    document.getElementById('lblTranslateTo').innerText = '3. ترجمة النص إلى:';
+    document.getElementById('btnTranslate').innerText = 'ترجمة النص 🌐';
+    document.getElementById('lblTranslated').innerText = 'النص المترجم:';
+    document.getElementById('btnDownload').innerText = 'تحميل كملف PDF 📄';
+  }
+
   async function processImage() {
     const file = document.getElementById('imageInput').files[0];
     const lang = document.getElementById('ocrLang').value;
     const status = document.getElementById('status');
     const output = document.getElementById('extractedText');
 
-    if (!file) return alert('يرجى اختيار صورة أولاً');
+    if (!file) return alert('Please select an image first / يرجى اختيار صورة أولاً');
 
-    status.innerText = 'جاري معالجة الصورة واستخراج النص...';
+    status.innerText = 'Processing image... / جاري المعالجة...';
     output.value = '';
 
     try {
       const result = await Tesseract.recognize(file, lang);
       output.value = result.data.text;
-      status.innerText = 'تم استخراج النص بنجاح!';
+      status.innerText = 'Text extracted successfully! / تم الاستخراج بنجاح!';
     } catch (err) {
-      status.innerText = 'حدث خطأ أثناء معالجة الصورة.';
+      status.innerText = 'Error processing image / حدث خطأ أثناء المعالجة.';
     }
   }
 
@@ -94,26 +113,25 @@
     const targetLang = document.getElementById('targetLang').value;
     const output = document.getElementById('translatedText');
 
-    if (!text) return alert('لا يوجد نص لترجمته');
+    if (!text) return alert('No text to translate / لا يوجد نص لترجمته');
 
-    output.value = 'جاري الترجمة...';
+    output.value = 'Translating... / جاري الترجمة...';
 
     try {
       const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=autodetect|${targetLang}`);
       const data = await res.json();
       output.value = data.responseData.translatedText;
     } catch (err) {
-      alert('تعذرت الترجمة، تحقق من الاتصال');
+      alert('Translation failed / تعذرت الترجمة');
     }
   }
 
   function downloadPDF() {
     const text = document.getElementById('translatedText').value || document.getElementById('extractedText').value;
-    if (!text) return alert('لا يوجد نص لتحميله');
+    if (!text) return alert('No text to download / لا يوجد نص لتحميله');
 
     const element = document.createElement('div');
     element.style.padding = '20px';
-    element.style.direction = 'rtl';
     element.innerText = text;
 
     html2pdf().from(element).save('document.pdf');
