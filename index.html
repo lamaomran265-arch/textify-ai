@@ -1,63 +1,124 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Text Extractor - Free Online OCR</title>
-  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+  <title>منصة استخراج وترجمة النصوص الذكية</title>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background-color: #f4f7f6; font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-    .card { background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 500px; width: 100%; text-align: center; }
-    h1 { color: #333; font-size: 24px; margin-bottom: 10px; }
-    p { color: #666; font-size: 14px; margin-bottom: 20px; }
-    input[type="file"] { margin: 15px 0; width: 100%; }
-    button { background-color: #007bff; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-size: 16px; width: 100%; font-weight: bold; }
-    button:hover { background-color: #0056b3; }
-    #status { margin-top: 15px; font-weight: 500; color: #444; }
-    textarea { width: 100%; height: 150px; margin-top: 15px; padding: 10px; border: 1px solid #ccc; border-radius: 6px; resize: vertical; }
+    body { font-family: system-ui, sans-serif; background: #f4f6f8; margin: 0; padding: 20px; direction: rtl; }
+    .card { max-width: 650px; margin: auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+    h2 { text-align: center; color: #1e293b; margin-top: 0; }
+    .input-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; color: #475569; }
+    input[type="file"], select, button { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; box-sizing: border-box; margin-bottom: 10px; font-size: 15px; }
+    button { background: #2563eb; color: #fff; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    button:hover { background: #1d4ed8; }
+    .secondary-btn { background: #059669; }
+    .secondary-btn:hover { background: #047857; }
+    #status { font-weight: bold; text-align: center; color: #0284c7; margin: 10px 0; }
+    textarea { width: 100%; height: 120px; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; box-sizing: border-box; resize: vertical; margin-bottom: 10px; }
   </style>
 </head>
 <body>
 
-  <div class="card">
-    <h1>AI Text Extractor</h1>
-    <p>Upload an image to extract text instantly</p>
-    
+<div class="card">
+  <h2>تحويل الصور إلى نصوص وتأطيرها</h2>
+  
+  <div class="input-group">
+    <label>1. اختر الصورة:</label>
     <input type="file" id="imageInput" accept="image/*">
-    <button onclick="extractText()">Extract Text</button>
-    
-    <div id="status"></div>
-    <textarea id="resultText" placeholder="Extracted text will appear here..." readonly></textarea>
   </div>
 
-  <script>
-    async function extractText() {
-      const fileInput = document.getElementById('imageInput');
-      const status = document.getElementById('status');
-      const resultText = document.getElementById('resultText');
+  <div class="input-group">
+    <label>2. لغة النص داخل الصورة:</label>
+    <select id="ocrLang">
+      <option value="ara">العربية (Arabic)</option>
+      <option value="eng">الإنكليزية (English)</option>
+    </select>
+  </div>
 
-      if (fileInput.files.length === 0) {
-        alert('Please select an image first!');
-        return;
-      }
+  <button onclick="processImage()">استخراج النص الآن 🚀</button>
+  <div id="status"></div>
 
-      const file = fileInput.files[0];
-      status.innerText = 'Processing image... Please wait.';
-      resultText.value = '';
+  <div class="input-group">
+    <label>النص المستخرج:</label>
+    <textarea id="extractedText" placeholder="سيظهر النص المستخرج هنا..."></textarea>
+  </div>
 
-      try {
-        const worker = await Tesseract.createWorker('eng');
-        const ret = await worker.recognize(file);
-        resultText.value = ret.data.text;
-        status.innerText = 'Done!';
-        await worker.terminate();
-      } catch (error) {
-        status.innerText = 'Error processing image.';
-        console.error(error);
-      }
+  <hr style="margin: 20px 0; border: none; border-top: 1px solid #e2e8f0;">
+
+  <div class="input-group">
+    <label>3. ترجمة النص إلى:</label>
+    <select id="targetLang">
+      <option value="en">الإنكليزية</option>
+      <option value="ar">العربية</option>
+      <option value="fr">الفرنسية</option>
+      <option value="de">الألمانية</option>
+    </select>
+    <button class="secondary-btn" onclick="translateText()">ترجمة النص 🌐</button>
+  </div>
+
+  <div class="input-group">
+    <label>النص المترجم:</label>
+    <textarea id="translatedText" placeholder="سيظهر النص المترجم هنا..."></textarea>
+  </div>
+
+  <button onclick="downloadPDF()" style="background: #dc2626;">تحميل كملف PDF 📄</button>
+</div>
+
+<script>
+  async function processImage() {
+    const file = document.getElementById('imageInput').files[0];
+    const lang = document.getElementById('ocrLang').value;
+    const status = document.getElementById('status');
+    const output = document.getElementById('extractedText');
+
+    if (!file) return alert('يرجى اختيار صورة أولاً');
+
+    status.innerText = 'جاري معالجة الصورة واستخراج النص...';
+    output.value = '';
+
+    try {
+      const result = await Tesseract.recognize(file, lang);
+      output.value = result.data.text;
+      status.innerText = 'تم استخراج النص بنجاح!';
+    } catch (err) {
+      status.innerText = 'حدث خطأ أثناء معالجة الصورة.';
     }
-  </script>
+  }
+
+  async function translateText() {
+    const text = document.getElementById('extractedText').value;
+    const targetLang = document.getElementById('targetLang').value;
+    const output = document.getElementById('translatedText');
+
+    if (!text) return alert('لا يوجد نص لترجمته');
+
+    output.value = 'جاري الترجمة...';
+
+    try {
+      const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=autodetect|${targetLang}`);
+      const data = await res.json();
+      output.value = data.responseData.translatedText;
+    } catch (err) {
+      alert('تعذرت الترجمة، تحقق من الاتصال');
+    }
+  }
+
+  function downloadPDF() {
+    const text = document.getElementById('translatedText').value || document.getElementById('extractedText').value;
+    if (!text) return alert('لا يوجد نص لتحميله');
+
+    const element = document.createElement('div');
+    element.style.padding = '20px';
+    element.style.direction = 'rtl';
+    element.innerText = text;
+
+    html2pdf().from(element).save('document.pdf');
+  }
+</script>
 
 </body>
 </html>
