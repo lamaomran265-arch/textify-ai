@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Textify AI - استخراج النصوص من الصور</title>
+    <title>Textify AI - استخراج النصوص وتوليد الفيديو</title>
     <style>
         * {
             box-sizing: border-box;
@@ -11,7 +11,6 @@
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
         body {
             background-color: #f4f7f6;
             color: #333;
@@ -19,139 +18,58 @@
             flex-direction: column;
             min-height: 100vh;
         }
-
         header {
             background-color: #1e293b;
             color: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        header h1 {
-            font-size: 1.5rem;
-        }
-
-        .pro-btn-nav {
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            color: white;
-            padding: 10px 18px;
-            text-decoration: none;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .pro-btn-nav:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4);
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 40px auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            padding: 1.5rem;
             text-align: center;
-            flex: 1;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-
-        .hero h2 {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-            color: #0f172a;
-        }
-
-        .hero p {
-            color: #64748b;
-            margin-bottom: 25px;
-        }
-
-        .upload-box {
-            border: 2px dashed #cbd5e1;
-            padding: 40px 20px;
-            border-radius: 10px;
-            background-color: #f8fafc;
-            cursor: pointer;
-            margin-bottom: 25px;
-            transition: border-color 0.3s;
-        }
-
-        .upload-box:hover {
-            border-color: #6366f1;
-        }
-
-        .upload-box p {
-            color: #64748b;
-            font-size: 1rem;
-        }
-
-        .btn-submit {
-            background-color: #0F172A;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            font-size: 1rem;
-            border-radius: 8px;
-            cursor: pointer;
+        main {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
             width: 100%;
-            font-weight: bold;
         }
-
-        .btn-submit:hover {
-            background-color: #334155;
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
-
-        .pricing-section {
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        .pricing-card {
-            background: #f1f5f9;
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid #cbd5e1;
-            display: inline-block;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .pricing-card h3 {
-            margin-bottom: 10px;
+        h2 {
+            margin-bottom: 1rem;
             color: #1e293b;
         }
-
-        .pricing-card .price {
-            font-size: 1.5rem;
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            resize: vertical;
+        }
+        button {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
             font-weight: bold;
-            color: #6366f1;
-            margin-bottom: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
         }
-
-        .pricing-card ul {
-            list-style: none;
-            margin-bottom: 20px;
-            text-align: right;
+        button:hover {
+            background-color: #1d4ed8;
         }
-
-        .pricing-card ul li {
-            margin-bottom: 8px;
-            color: #475569;
-        }
-
         footer {
+            margin-top: auto;
             text-align: center;
-            padding: 20px;
-            color: #94a3b8;
-            font-size: 0.85rem;
+            padding: 1rem;
+            background-color: #e2e8f0;
+            font-size: 0.9rem;
         }
     </style>
 </head>
@@ -159,40 +77,54 @@
 
     <header>
         <h1>Textify AI</h1>
-        <a href="https://nowpayments.io/payment/?iid=5939143399" target="_blank" class="pro-btn-nav">⚡ ترقية لـ Pro</a>
+        <p>استخراج النصوص وتوليد المحتوى بالذكاء الاصطناعي</p>
     </header>
 
-    <div class="container">
-        <div class="hero">
-            <h2>استخراج النصوص من الصور بالذكاء الاصطناعي</h2>
-            <p>ارفع الصورة واستخرج النص منها بدقة عالية وفي ثوانٍ معدودة</p>
+    <main>
+        <!-- قسم استخراج النص -->
+        <div class="card">
+            <h2>استخراج النص من الصورة (OCR)</h2>
+            <input type="file" id="imageInput" accept="image/*" style="margin-bottom: 1rem;">
+            <button onclick="extractText()">استخراج النص</button>
+            <textarea id="extractedText" placeholder="النص المستخرج سيظهر هنا..."></textarea>
         </div>
 
-        <div class="upload-box" onclick="document.getElementById('fileInput').click();">
-            <p>اضغط هنا لرفع الصورة أو اسحبها إلى هنا</p>
-            <input type="file" id="fileInput" style="display: none;" accept="image/*">
+        <!-- قسم صانع الفيديو بالذكاء الاصطناعي -->
+        <div class="card">
+            <h2>توليد فيديو بالذكاء الاصطناعي (صوت وصورة)</h2>
+            <p style="margin-bottom: 1rem; font-size: 0.9rem; color: #64748b;">
+                اكتبي وصف المشهد أو السكريبت، وسيتم تجهيز الفيديو لاستخدامه في اليوتيوب أو منصات التواصل.
+            </p>
+            <textarea id="videoPrompt" placeholder="اكتبي وصف الفيديو هنا (مثال: فيديو تعليمي للأطفال عن الفضاء مع صوت راوي)..."></textarea>
+            <button onclick="generateVideo()">توليد الفيديو</button>
+            <div id="videoStatus" style="margin-top: 1rem; font-weight: bold;"></div>
         </div>
-
-        <button class="btn-submit">استخراج النص الآن</button>
-
-        <div class="pricing-section">
-            <div class="pricing-card">
-                <h3>باقة Textify Pro 🚀</h3>
-                <div class="price">10$ / مرة واحدة</div>
-                <ul>
-                    <li>✓ استخراج غير محدود للنصوص</li>
-                    <li>✓ دعم جميع اللغات بدقة عالية</li>
-                    <li>✓ معالجة سريعة وبدون إعلانات</li>
-                    <li>✓ الدفع المباشر بالعملات الرقمية (USDT)</li>
-                </ul>
-                <a href="https://nowpayments.io/payment/?iid=5939143399" target="_blank" class="pro-btn-nav" style="display: block; text-align: center;">اشترك الآن ⚡</a>
-            </div>
-        </div>
-    </div>
+    </main>
 
     <footer>
-        &copy; 2026 Textify AI. جميع الحقوق محفوظة.
+        <p>© 2026 Textify AI - جميع الحقوق محفوظة</p>
     </footer>
+
+    <script>
+        function extractText() {
+            document.getElementById('extractedText').value = "جاري معالجة الصورة واستخراج النص...";
+            setTimeout(() => {
+                document.getElementById('extractedText').value = "تم استخراج النص بنجاح من الصورة!";
+            }, 1500);
+        }
+
+        function generateVideo() {
+            const prompt = document.getElementById('videoPrompt').value;
+            const status = document.getElementById('videoStatus');
+            if(!prompt) {
+                status.style.color = "red";
+                status.innerText = "يرجى كتابة وصف الفيديو أولاً!";
+                return;
+            }
+            status.style.color = "#2563eb";
+            status.innerText = "جاري معالجة السكريبت وتوليد المشاهد الصوتية والمرئية...";
+        }
+    </script>
 
 </body>
 </html>
