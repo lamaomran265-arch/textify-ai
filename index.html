@@ -125,7 +125,7 @@
             border-radius: 8px;
             display: block;
             margin-top: 10px;
-            border: 1px solid #ccc;
+            border: 1px solid var(--border-color);
         }
 
         .media-box {
@@ -138,6 +138,7 @@
 
     <div class="container">
         
+        <!-- قسم استخراج النص من الصورة -->
         <div class="card">
             <h2>استخراج النص من الصور (OCR)</h2>
             <p class="subtitle">قم برفع صورة تحتوي على نص بالعربية أو الإنكليزية</p>
@@ -152,11 +153,12 @@
             <button class="btn" style="background-color: #475569;" onclick="copyText('extractedText')">نسخ النص</button>
         </div>
 
+        <!-- قسم مولد الصور والمشاهد المباشر -->
         <div class="card">
             <h2>مولد المشاهد والصور الذكي</h2>
-            <p class="subtitle">اكتبي الوصف بالإنكليزية (مثال: cute fox in forest 3d)</p>
+            <p class="subtitle">اكتبي الوصف بالإنكليزية (مثال: cute cat in garden 3d)</p>
 
-            <textarea id="promptInput" placeholder="Write in English... (e.g. A cute fox running in a forest, 3d render)"></textarea>
+            <textarea id="promptInput" placeholder="Write in English... (e.g. A cute cat in a garden, 3d render)"></textarea>
             
             <button id="genBtn" class="btn" onclick="generateImageDirect()">توليد المشهد الآن ✨</button>
             
@@ -164,7 +166,7 @@
 
             <div id="resultBox" class="media-box">
                 <img id="outputImg" class="img-result" src="" alt="Result">
-                <a id="downloadLink" class="btn-download" target="_blank" href="#">📥 فتح وحفظ الصورة في الهاتف</a>
+                <a id="downloadLink" class="btn-download" target="_blank" href="#">📥 حفظ الصورة على الهاتف</a>
             </div>
         </div>
 
@@ -210,24 +212,44 @@
             btn.disabled = true;
             resultBox.style.display = "none";
             status.style.color = "var(--primary-color)";
-            status.innerText = "جاري الاتصال بالسيرفر وبناء المشهد...";
+            status.innerText = "جاري التوليد...";
 
-            const cleanPrompt = encodeURIComponent(prompt + " 3d cartoon render highly detailed");
-            const seed = Math.floor(Math.random() * 999999);
+            const cleanPrompt = encodeURIComponent(prompt + ", 3d cartoon render, highly detailed");
             
-            // رابط توليد مباشر وموثوق 100%
-            const directUrl = `https://image.pollinations.ai/prompt/${cleanPrompt}?seed=${seed}&nologo=true&width=800&height=800`;
+            // استخدام سيرفر مباشر يدعم جميع المتصفحات والهواتف
+            const imgUrl = `https://picsum.photos/500/500`; // تجربة أو رابط التوليد التلقائي المباشر
 
-            outputImg.src = directUrl;
+            // رابط الخدمة المباشرة المفتوحة:
+            const finalUrl = `https://image.pollinations.ai/prompt/${cleanPrompt}?width=512&height=512&nologo=true&seed=${Math.floor(Math.random() * 100000)}`;
+
+            outputImg.crossOrigin = "anonymous";
+            outputImg.src = finalUrl;
+
+            // في حال تأخر التحميل، نُظهر النتيجة فور بدء التحميل
+            status.innerText = "جاري إنشاء الصورة ورسمها...";
+            resultBox.style.display = "block";
 
             outputImg.onload = function() {
-                downloadLink.href = directUrl;
-                resultBox.style.display = "block";
+                downloadLink.href = finalUrl;
                 status.innerText = "تم إنشاء المشهد بنجاح!";
                 status.style.color = "var(--success-color)";
                 btn.disabled = false;
             };
 
             outputImg.onerror = function() {
-                status.innerText = "حدث خطأ في تحميل الصورة، يرجى التأكد من كتابة الوصف بالإنكليزية وإعادة المحاولة.";
-                
+                status.innerText = "تعذر تحميل الصورة، يرجى المحاولة مجدداً.";
+                status.style.color = "var(--error-color)";
+                btn.disabled = false;
+            };
+        }
+
+        // 3. Copy Function
+        function copyText(id) {
+            const txt = document.getElementById(id);
+            if (!txt.value) return alert("لا يوجد نص لنسخه!");
+            navigator.clipboard.writeText(txt.value);
+            alert("تم النسخ بنجاح!");
+        }
+    </script>
+</body>
+</html>
