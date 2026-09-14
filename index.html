@@ -4,39 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Textify AI - منصة الذكاء الاصطناعي</title>
-    <!-- مكتبة Tesseract المجانية لاستخراج النصوص -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <style>
         :root {
-            --primary-color: #1d4ed8;
-            --primary-hover: #1e40af;
-            --bg-color: #f3f4f6;
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f8fafc;
             --card-bg: #ffffff;
-            --text-color: #1f2937;
-            --subtext-color: #6b7280;
-            --border-color: #e5e7eb;
-            --error-color: #dc2626;
-            --success-color: #16a34a;
+            --text-color: #0f172a;
+            --subtext-color: #64748b;
+            --border-color: #e2e8f0;
+            --error-color: #ef4444;
+            --success-color: #10b981;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: system-ui, -apple-system, sans-serif;
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
+            padding: 20px 12px;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
-            padding: 20px;
         }
 
         .container {
-            max-width: 600px;
+            max-width: 550px;
             margin: 0 auto;
             width: 100%;
             flex: 1;
@@ -45,39 +44,36 @@
         .card {
             background: var(--card-bg);
             border-radius: 12px;
-            padding: 24px;
-            margin-bottom: 24px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             border: 1px solid var(--border-color);
         }
 
         h2 {
-            font-size: 1.4rem;
-            margin-bottom: 8px;
+            font-size: 1.25rem;
+            margin-bottom: 6px;
             text-align: center;
         }
 
         .subtitle {
             color: var(--subtext-color);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             text-align: center;
-            margin-bottom: 20px;
-            line-height: 1.5;
+            margin-bottom: 16px;
+            line-height: 1.4;
         }
 
         .upload-area {
             border: 2px dashed var(--primary-color);
             border-radius: 8px;
-            padding: 20px;
+            padding: 16px;
             text-align: center;
             cursor: pointer;
             background-color: #eff6ff;
-            margin-bottom: 16px;
-            transition: background 0.2s;
-        }
-
-        .upload-area:hover {
-            background-color: #dbeafe;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: #1e40af;
         }
 
         input[type="file"] {
@@ -86,13 +82,13 @@
 
         textarea {
             width: 100%;
-            height: 120px;
-            padding: 12px;
+            height: 110px;
+            padding: 10px;
             border: 1px solid var(--border-color);
             border-radius: 8px;
             resize: vertical;
-            font-size: 1rem;
-            margin-bottom: 16px;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
             outline: none;
         }
 
@@ -104,43 +100,44 @@
             background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 12px 24px;
+            padding: 12px;
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
             width: 100%;
         }
 
-        .btn:hover {
-            background-color: var(--primary-hover);
+        .btn-copy {
+            background-color: #475569;
+            margin-top: -4px;
         }
 
         .btn:disabled {
-            background-color: #9ca3af;
+            background-color: #94a3b8;
             cursor: not-allowed;
         }
 
         .status-msg {
-            margin-top: 12px;
-            font-size: 0.9rem;
+            margin: 10px 0;
+            font-size: 0.85rem;
             text-align: center;
             font-weight: 500;
         }
 
         .img-preview {
             max-width: 100%;
-            max-height: 200px;
-            border-radius: 8px;
-            margin-bottom: 12px;
+            max-height: 150px;
+            border-radius: 6px;
+            margin: 8px auto;
             display: none;
         }
 
         footer {
             text-align: center;
-            padding: 20px;
+            padding: 15px;
             color: var(--subtext-color);
-            font-size: 0.875rem;
+            font-size: 0.8rem;
         }
     </style>
 </head>
@@ -148,39 +145,39 @@
 
     <div class="container">
         
-        <!-- 1. أداة استخراج النص من الصورة -->
+        <!-- قسم استخراج النص من الصورة -->
         <div class="card">
-            <h2>استخراج النص من الصور (OCR)</h2>
-            <p class="subtitle">قم برفع صورة تحتوي على نص باللغة العربية أو الإنكليزية لاستخراجه تلقائياً.</p>
+            <h2>استخراج النص من الصور</h2>
+            <p class="subtitle">قم برفع صورة تحتوي على نص باللغة العربية أو الإنكليزية</p>
             
             <div class="upload-area" onclick="document.getElementById('imageInput').click()">
-                <p>📁 اضغط هنا لاختيار صورة من جهازك</p>
+                اضغط هنا لاختيار صورة من جهازك 📁
                 <input type="file" id="imageInput" accept="image/*" onchange="processImage(this.files[0])">
             </div>
 
             <center><img id="imagePreview" class="img-preview" alt="معاينة الصورة"></center>
 
-            <div id="ocrStatus" class="status-msg" style="color: var(--primary-color);"></div>
+            <div id="ocrStatus" class="status-msg"></div>
 
             <textarea id="extractedText" placeholder="النص المستخرج سيظهر هنا..." readonly></textarea>
             
-            <button class="btn" style="background-color: #4b5563;" onclick="copyText('extractedText')">نسخ النص المستخرج</button>
+            <button class="btn btn-copy" onclick="copyText('extractedText')">نسخ النص المستخرج</button>
         </div>
 
-        <!-- 2. أداة توليد سكريبت ومشاهد الفيديو -->
+        <!-- قسم صانع سكريبت المشاهد -->
         <div class="card">
             <h2>صانع سكريبت ومشاهد الفيديو</h2>
-            <p class="subtitle">اكتب فكرة الفيديو، وسيقوم الذكاء الاصطناعي بتوليد نص المشاهد وأوامر الصور (Prompts) بالإنكليزية جاهزة للاستخدام.</p>
+            <p class="subtitle">اكتب فكرة الفيديو لتوليد نص المشاهد وأوامر الصور فورياً</p>
             
-            <textarea id="videoPrompt" placeholder="اكتب فكرة الفيديو هنا... (مثال: فيديو عن جمال الطبيعة للأطفال)"></textarea>
+            <textarea id="videoPrompt" placeholder="اكتب فكرة الفيديو هنا... (مثال: قصة قصيرة للأطفال عن الصداقة)"></textarea>
             
-            <button id="generateBtn" class="btn" onclick="generateScript()">توليد سكريبت المشاهد</button>
+            <button id="generateBtn" class="btn" onclick="generateScript()">توليد السكريبت والمشاهد</button>
             
-            <div id="scriptStatus" class="status-msg" style="color: var(--primary-color);"></div>
+            <div id="scriptStatus" class="status-msg"></div>
 
-            <textarea id="scriptResult" placeholder="السكريبت وأوامر المشاهد ستظهر هنا..." readonly style="height: 180px; margin-top: 16px;"></textarea>
+            <textarea id="scriptResult" placeholder="السكريبت والمشاهد ستظهر هنا..." readonly style="height: 150px;"></textarea>
 
-            <button class="btn" style="background-color: #10b981;" onclick="copyText('scriptResult')">نسخ السكريبت والمشاهد</button>
+            <button class="btn btn-copy" style="background-color: #10b981;" onclick="copyText('scriptResult')">نسخ السكريبت والمشاهد</button>
         </div>
 
     </div>
@@ -190,7 +187,6 @@
     </footer>
 
     <script>
-        // دالة استخراج النص من الصورة
         async function processImage(file) {
             if (!file) return;
 
@@ -202,7 +198,8 @@
             preview.style.display = 'block';
 
             textArea.value = "";
-            status.innerText = "جاري قراءة وتحليل النص من الصورة...";
+            status.style.color = "var(--primary-color)";
+            status.innerText = "جاري قراءة وتحليل النص...";
 
             try {
                 const worker = await Tesseract.createWorker('ara+eng');
@@ -214,13 +211,12 @@
                 
                 await worker.terminate();
             } catch (error) {
-                console.error("OCR Error:", error);
-                status.innerText = "حدث خطأ أثناء قراءة الصورة.";
+                console.error(error);
+                status.innerText = "حدث خطأ أثناء القراءة.";
                 status.style.color = "var(--error-color)";
             }
         }
 
-        // دالة توليد سكريبت ومشاهد الفيديو
         async function generateScript() {
             const promptInput = document.getElementById('videoPrompt').value.trim();
             const status = document.getElementById('scriptStatus');
@@ -234,35 +230,31 @@
             }
 
             btn.disabled = true;
-            status.innerText = "جاري كتابة السكريبت وتجهيز المشاهد...";
             status.style.color = "var(--primary-color)";
+            status.innerText = "جاري معالجة الفكرة وإنشاء السكريبت...";
             resultArea.value = "";
 
             try {
-                // الاتصال بـ API للذكاء الاصطناعي لكتابة السكريبت
-                const systemPrompt = "أنت مساعد ذكاء اصطناعي متخصص في صناعة الفيديوهات. قم بتحويل فكرة المستخدم إلى سكريبت فيديو مقسم إلى مشاهد، مع وضع نص تعليقي (Voiceover) وأوامر رسم بالإنكليزية (AI Prompts) لكل مشهد بشكل احترافي ومختصر.";
-                const fullPrompt = `${systemPrompt}\n\nفكرة الفيديو: ${promptInput}`;
-                
+                const fullPrompt = `اكتب سكريبت فيديو ومقاطع قصيرة مع أوامر رسم بالإنكليزية بالفكرة التالية: ${promptInput}`;
                 const response = await fetch(`https://text.pollinations.ai/${encodeURIComponent(fullPrompt)}`);
                 
-                if (!response.ok) throw new Error("تعذر الاتصال بالخدمة حالياً.");
+                if (!response.ok) throw new Error("السيرفر غير متوفر حالياً.");
 
                 const textResult = await response.text();
                 
                 resultArea.value = textResult;
-                status.innerText = "تم إنشاء سكريبت الفيديو بنجاح!";
+                status.innerText = "تم إنشاء السكريبت والمشاهد بنجاح!";
                 status.style.color = "var(--success-color)";
 
             } catch (error) {
-                console.error("Script Error:", error);
-                status.innerText = "حدث خطأ أثناء إنشاء السكريبت. حاول مرة أخرى.";
+                console.error(error);
+                status.innerText = "تعذر التوليد حالياً، حاول مجدداً.";
                 status.style.color = "var(--error-color)";
             } finally {
                 btn.disabled = false;
             }
         }
 
-        // دالة نسخ النص العامة
         function copyText(elementId) {
             const textArea = document.getElementById(elementId);
             if (!textArea.value) {
@@ -274,4 +266,5 @@
         }
     </script>
 </body>
-</html>
+    </html>
+    
