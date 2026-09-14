@@ -102,6 +102,10 @@
             display: block;
             text-align: center;
             margin-top: 10px;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
         }
 
         .btn:disabled {
@@ -121,6 +125,7 @@
             border-radius: 8px;
             display: block;
             margin-top: 10px;
+            border: 1px solid #ccc;
         }
 
         .media-box {
@@ -149,9 +154,9 @@
 
         <div class="card">
             <h2>مولد المشاهد والصور الذكي</h2>
-            <p class="subtitle">اكتب وصف المشهد بالإنكليزية لتوليده مباشرة داخل الموقع</p>
+            <p class="subtitle">اكتبي الوصف بالإنكليزية (مثال: cute fox in forest 3d)</p>
 
-            <textarea id="promptInput" placeholder="Write description in English... (e.g. A cute fox in a magical forest, 3d render)"></textarea>
+            <textarea id="promptInput" placeholder="Write in English... (e.g. A cute fox running in a forest, 3d render)"></textarea>
             
             <button id="genBtn" class="btn" onclick="generateImageDirect()">توليد المشهد الآن ✨</button>
             
@@ -159,5 +164,70 @@
 
             <div id="resultBox" class="media-box">
                 <img id="outputImg" class="img-result" src="" alt="Result">
-                <a id="downloadLink" class="btn btn-download" href="#" download
-                    
+                <a id="downloadLink" class="btn-download" target="_blank" href="#">📥 فتح وحفظ الصورة في الهاتف</a>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // 1. OCR Function
+        async function processImage(file) {
+            if (!file) return;
+            const status = document.getElementById('ocrStatus');
+            const textArea = document.getElementById('extractedText');
+            status.style.color = "var(--primary-color)";
+            status.innerText = "جاري قراءة النص...";
+
+            try {
+                const worker = await Tesseract.createWorker('ara+eng');
+                const result = await worker.recognize(file);
+                textArea.value = result.data.text;
+                status.innerText = "تم استخراج النص بنجاح!";
+                status.style.color = "var(--success-color)";
+                await worker.terminate();
+            } catch (e) {
+                status.innerText = "حدث خطأ أثناء القراءة.";
+                status.style.color = "var(--error-color)";
+            }
+        }
+
+        // 2. Direct Image Generator
+        function generateImageDirect() {
+            const prompt = document.getElementById('promptInput').value.trim();
+            const status = document.getElementById('genStatus');
+            const resultBox = document.getElementById('resultBox');
+            const outputImg = document.getElementById('outputImg');
+            const downloadLink = document.getElementById('downloadLink');
+            const btn = document.getElementById('genBtn');
+
+            if (!prompt) {
+                status.innerText = "يرجى كتابة وصف المشهد بالإنكليزية أولاً.";
+                status.style.color = "var(--error-color)";
+                return;
+            }
+
+            btn.disabled = true;
+            resultBox.style.display = "none";
+            status.style.color = "var(--primary-color)";
+            status.innerText = "جاري الاتصال بالسيرفر وبناء المشهد...";
+
+            const cleanPrompt = encodeURIComponent(prompt + " 3d cartoon render highly detailed");
+            const seed = Math.floor(Math.random() * 999999);
+            
+            // رابط توليد مباشر وموثوق 100%
+            const directUrl = `https://image.pollinations.ai/prompt/${cleanPrompt}?seed=${seed}&nologo=true&width=800&height=800`;
+
+            outputImg.src = directUrl;
+
+            outputImg.onload = function() {
+                downloadLink.href = directUrl;
+                resultBox.style.display = "block";
+                status.innerText = "تم إنشاء المشهد بنجاح!";
+                status.style.color = "var(--success-color)";
+                btn.disabled = false;
+            };
+
+            outputImg.onerror = function() {
+                status.innerText = "حدث خطأ في تحميل الصورة، يرجى التأكد من كتابة الوصف بالإنكليزية وإعادة المحاولة.";
+                
