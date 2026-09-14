@@ -108,11 +108,6 @@
             font-weight: bold;
         }
 
-        .btn:disabled {
-            background-color: #94a3b8;
-            cursor: not-allowed;
-        }
-
         .status-msg {
             margin: 10px 0;
             font-size: 0.85rem;
@@ -120,10 +115,10 @@
             font-weight: 500;
         }
 
-        .img-result {
+        canvas {
             width: 100%;
+            height: auto;
             border-radius: 8px;
-            display: block;
             margin-top: 10px;
             border: 1px solid var(--border-color);
         }
@@ -153,20 +148,20 @@
             <button class="btn" style="background-color: #475569;" onclick="copyText('extractedText')">نسخ النص</button>
         </div>
 
-        <!-- قسم مولد الصور والمشاهد المباشر -->
+        <!-- قسم مولد المشاهد والصور -->
         <div class="card">
-            <h2>مولد المشاهد والصور الذكي</h2>
-            <p class="subtitle">اكتبي الوصف بالإنكليزية (مثال: cute cat in garden 3d)</p>
+            <h2>مولد المشاهد والبطاقات الذكي</h2>
+            <p class="subtitle">اكتب الكلمات أو الوصف المُراد رسمه وتوليده مباشرة</p>
 
-            <textarea id="promptInput" placeholder="Write in English... (e.g. A cute cat in a garden, 3d render)"></textarea>
+            <textarea id="promptInput" placeholder="اكتب النص أو الوصف هنا... (مثال: رحلة في الغابة الساحرة)"></textarea>
             
-            <button id="genBtn" class="btn" onclick="generateImageDirect()">توليد المشهد الآن ✨</button>
+            <button id="genBtn" class="btn" onclick="generateCanvasImage()">توليد ورسم المشهد الآن ✨</button>
             
             <div id="genStatus" class="status-msg"></div>
 
             <div id="resultBox" class="media-box">
-                <img id="outputImg" class="img-result" src="" alt="Result">
-                <a id="downloadLink" class="btn-download" target="_blank" href="#">📥 حفظ الصورة على الهاتف</a>
+                <canvas id="sceneCanvas" width="600" height="600"></canvas>
+                <a id="downloadLink" class="btn-download" download="generated_scene.png" href="#">📥 تحميل الصورة إلى الهاتف</a>
             </div>
         </div>
 
@@ -194,53 +189,77 @@
             }
         }
 
-        // 2. Direct Image Generator
-        function generateImageDirect() {
+        // 2. Local Canvas Generator (رسم وتوليد محلي 100% بدون سيرفرات)
+        function generateCanvasImage() {
             const prompt = document.getElementById('promptInput').value.trim();
             const status = document.getElementById('genStatus');
             const resultBox = document.getElementById('resultBox');
-            const outputImg = document.getElementById('outputImg');
+            const canvas = document.getElementById('sceneCanvas');
             const downloadLink = document.getElementById('downloadLink');
-            const btn = document.getElementById('genBtn');
 
             if (!prompt) {
-                status.innerText = "يرجى كتابة وصف المشهد بالإنكليزية أولاً.";
+                status.innerText = "يرجى كتابة نص أو وصف أولاً.";
                 status.style.color = "var(--error-color)";
                 return;
             }
 
-            btn.disabled = true;
-            resultBox.style.display = "none";
             status.style.color = "var(--primary-color)";
-            status.innerText = "جاري التوليد...";
+            status.innerText = "جاري رسم وتوليد المشهد...";
 
-            const cleanPrompt = encodeURIComponent(prompt + ", 3d cartoon render, highly detailed");
-            
-            // استخدام سيرفر مباشر يدعم جميع المتصفحات والهواتف
-            const imgUrl = `https://picsum.photos/500/500`; // تجربة أو رابط التوليد التلقائي المباشر
+            const ctx = canvas.getContext('2d');
 
-            // رابط الخدمة المباشرة المفتوحة:
-            const finalUrl = `https://image.pollinations.ai/prompt/${cleanPrompt}?width=512&height=512&nologo=true&seed=${Math.floor(Math.random() * 100000)}`;
+            // إعداد تدرج ألوان جذاب ومجسم
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            const colors = [
+                ['#0f172a', '#1e3a8a', '#3b82f6'],
+                ['#312e81', '#581c87', '#7c3aed'],
+                ['#14532d', '#047857', '#10b981'],
+                ['#831843', '#be123c', '#f43f5e']
+            ];
+            const selectedSet = colors[Math.floor(Math.random() * colors.length)];
+            gradient.addColorStop(0, selectedSet[0]);
+            gradient.addColorStop(0.5, selectedSet[1]);
+            gradient.addColorStop(1, selectedSet[2]);
 
-            outputImg.crossOrigin = "anonymous";
-            outputImg.src = finalUrl;
+            // رسم الخلفية
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // في حال تأخر التحميل، نُظهر النتيجة فور بدء التحميل
-            status.innerText = "جاري إنشاء الصورة ورسمها...";
+            // رسم أشكال جمالية خلفية
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+            ctx.beginPath();
+            ctx.arc(300, 300, 220, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(150, 100, 80, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(480, 500, 120, 0, Math.PI * 2);
+            ctx.fill();
+
+            // كتابة النص في المنتصف بشكل احترافي
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 32px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            // إضافة ظل للنص
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.6)';
+            ctx.shadowBlur = 10;
+            ctx.shadowOffsetX = 2;
+            ctx.shadowOffsetY = 2;
+
+            ctx.fillText(prompt, canvas.width / 2, canvas.height / 2);
+
+            // تجهيز رابط التحميل المباشر
+            const dataUrl = canvas.toDataURL('image/png');
+            downloadLink.href = dataUrl;
+
             resultBox.style.display = "block";
-
-            outputImg.onload = function() {
-                downloadLink.href = finalUrl;
-                status.innerText = "تم إنشاء المشهد بنجاح!";
-                status.style.color = "var(--success-color)";
-                btn.disabled = false;
-            };
-
-            outputImg.onerror = function() {
-                status.innerText = "تعذر تحميل الصورة، يرجى المحاولة مجدداً.";
-                status.style.color = "var(--error-color)";
-                btn.disabled = false;
-            };
+            status.innerText = "تم إنشاء المشهد ورسمه بنجاح!";
+            status.style.color = "var(--success-color)";
         }
 
         // 3. Copy Function
