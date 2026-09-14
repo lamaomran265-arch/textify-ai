@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Textify AI - منصة الذكاء الاصطناعي</title>
+    <title>Textify AI - توليد الفيديو بالذكاء الاصطناعي</title>
     <style>
         :root {
             --primary-color: #1d4ed8;
@@ -45,7 +45,7 @@
             border-radius: 12px;
             padding: 24px;
             margin-bottom: 24px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             border: 1px solid var(--border-color);
         }
 
@@ -73,7 +73,6 @@
             font-size: 1rem;
             margin-bottom: 16px;
             outline: none;
-            transition: border-color 0.2s;
         }
 
         textarea:focus {
@@ -135,24 +134,19 @@
 <body>
 
     <div class="container">
-        <!-- قسم استخراج النص (اختياري) -->
-        <div class="card">
-            <textarea id="extractedText" placeholder="النص المستخرج سيظهر هنا..." readonly></textarea>
-        </div>
-
         <!-- قسم توليد الفيديو -->
         <div class="card">
             <h2>توليد فيديو بالذكاء الاصطناعي</h2>
-            <p class="subtitle">(صوت وصورة)<br>اكتبي وصف المشهد أو السكريبت، وسيتم تجهيز الفيديو لاستخدامه في اليوتيوب أو منصات التواصل.</p>
+            <p class="subtitle">(صوت وصورة)<br>اكتبي وصف المشهد أو السكريبت بالإنكليزية للحصول على أفضل نتيجة، وسيتم تجهيز الفيديو تلقائياً.</p>
             
-            <textarea id="videoPrompt" placeholder="اكتبي وصف المشهد هنا..."></textarea>
+            <textarea id="videoPrompt" placeholder="مثال: A beautiful nature landscape with mountains and a lake..."></textarea>
             
             <button id="generateBtn" class="btn" onclick="generateVideo()">توليد الفيديو</button>
             
             <div id="statusMessage" class="status-msg"></div>
 
             <div id="videoContainer" class="video-container">
-                <video id="videoResult" controls autoplay>
+                <video id="videoResult" controls autoplay loop>
                     متصفحك لا يدعم تشغيل الفيديو.
                 </video>
             </div>
@@ -160,15 +154,10 @@
     </div>
 
     <footer>
-        &copy; Textify AI 2026 - جميع الحقوق محفوظة
+        &copy; Textify AI - جميع الحقوق محفوظة
     </footer>
 
     <script>
-        // ضعي رابط الـ API الخاص بك هنا
-        const API_URL = "https://example.com/api/generate-video"; 
-        // ضعي مفتاح الـ API هنا إذا كان مطلوباً
-        const API_KEY = "YOUR_API_KEY_HERE"; 
-
         async function generateVideo() {
             const promptInput = document.getElementById('videoPrompt');
             const generateBtn = document.getElementById('generateBtn');
@@ -183,47 +172,33 @@
                 return;
             }
 
-            // إعداد الواجهة عند بدء التوليد
+            // قفل الزر وعرض حالة التحميل
             generateBtn.disabled = true;
             videoContainer.style.display = "none";
-            showStatus("جاري معالجة السكريبت وتوليد المشاهد الصوتية والمرئية...", "--primary-color");
+            showStatus("جاري معالجة السكريبت وتوليد الفيديو... قد يستغرق ذلك دقيقة.", "--primary-color");
 
             try {
-                // إرسال الطلب إلى السيرفر
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${API_KEY}`
-                    },
-                    body: JSON.stringify({
-                        prompt: promptText
-                    })
-                });
+                // خدمة مجانية لتوليد الفيديو تلقائياً
+                const encodedPrompt = encodeURIComponent(promptText);
+                const videoUrl = `https://pollinations.ai/p/${encodedPrompt}?width=1280&height=720&seed=${Math.floor(Math.random() * 1000000)}&model=video`;
 
-                // التحقق من استجابة السيرفر
+                // اختباري للتحقق من تجهيز الفيديو
+                const response = await fetch(videoUrl);
+
                 if (!response.ok) {
-                    throw new Error(`خطأ من الخادم (${response.status}): تعذر التوليد حالياً.`);
+                    throw new Error("عذراً، السيرفر مشغول حالياً. حاول مرة أخرى بعد قليل.");
                 }
 
-                const data = await response.json();
-
-                // التأكد من استلام رابط الفيديو
-                if (data && (data.video_url || data.url)) {
-                    const videoSrc = data.video_url || data.url;
-                    videoResult.src = videoSrc;
-                    videoContainer.style.display = "block";
-                    showStatus("تم توليد الفيديو بنجاح!", "green");
-                } else {
-                    throw new Error("لم يتم إرجاع رابط فيديو صالح من الخدمة.");
-                }
+                // عرض الفيديو الناتج
+                videoResult.src = videoUrl;
+                videoContainer.style.display = "block";
+                showStatus("تم توليد الفيديو بنجاح!", "green");
 
             } catch (error) {
-                // معالجة الأخطاء لعرضها للمستخدم وعدم تعليق الشاشة
                 console.error("Video Generation Error:", error);
                 showStatus(`حدث خطأ: ${error.message}`, "red");
             } finally {
-                // إعادة تفعيل الزر في كل الأحوال
+                // إرجاع الزر للعمل في كل الأحوال
                 generateBtn.disabled = false;
             }
         }
