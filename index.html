@@ -3,128 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Textify AI - استخراج النصوص وتوليد الفيديو</title>
+    <title>Textify AI - منصة الذكاء الاصطناعي</title>
     <style>
+        :root {
+            --primary-color: #1d4ed8;
+            --primary-hover: #1e40af;
+            --bg-color: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-color: #1f2937;
+            --subtext-color: #6b7280;
+            --border-color: #e5e7eb;
+            --error-color: #dc2626;
+            --success-color: #16a34a;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
+
         body {
-            background-color: #f4f7f6;
-            color: #333;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            padding: 20px;
         }
-        header {
-            background-color: #1e293b;
-            color: white;
-            padding: 1.5rem;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        main {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 0 1rem;
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
             width: 100%;
+            flex: 1;
         }
+
         .card {
-            background: white;
+            background: var(--card-bg);
             border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--border-color);
         }
+
         h2 {
-            margin-bottom: 1rem;
-            color: #1e293b;
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            text-align: center;
         }
+
+        .subtitle {
+            color: var(--subtext-color);
+            font-size: 0.9rem;
+            text-align: center;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
         textarea {
             width: 100%;
             height: 120px;
-            padding: 10px;
-            border: 1px solid #cbd5e1;
+            padding: 12px;
+            border: 1px solid var(--border-color);
             border-radius: 8px;
-            margin-bottom: 1rem;
             resize: vertical;
+            font-size: 1rem;
+            margin-bottom: 16px;
+            outline: none;
+            transition: border-color 0.2s;
         }
-        button {
-            background-color: #2563eb;
+
+        textarea:focus {
+            border-color: var(--primary-color);
+        }
+
+        .btn {
+            background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-weight: bold;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
+            width: 100%;
+            transition: background-color 0.2s;
         }
-        button:hover {
-            background-color: #1d4ed8;
+
+        .btn:hover {
+            background-color: var(--primary-hover);
         }
-        footer {
-            margin-top: auto;
+
+        .btn:disabled {
+            background-color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .status-msg {
+            margin-top: 16px;
+            font-size: 0.95rem;
             text-align: center;
-            padding: 1rem;
-            background-color: #e2e8f0;
-            font-size: 0.9rem;
+            font-weight: 500;
+            display: none;
+            line-height: 1.4;
+        }
+
+        .video-container {
+            margin-top: 20px;
+            display: none;
+            width: 100%;
+        }
+
+        video {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--subtext-color);
+            font-size: 0.875rem;
+            margin-top: auto;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Textify AI</h1>
-        <p>استخراج النصوص وتوليد المحتوى بالذكاء الاصطناعي</p>
-    </header>
-
-    <main>
-        <!-- قسم استخراج النص -->
+    <div class="container">
+        <!-- قسم استخراج النص (اختياري) -->
         <div class="card">
-            <h2>استخراج النص من الصورة (OCR)</h2>
-            <input type="file" id="imageInput" accept="image/*" style="margin-bottom: 1rem;">
-            <button onclick="extractText()">استخراج النص</button>
-            <textarea id="extractedText" placeholder="النص المستخرج سيظهر هنا..."></textarea>
+            <textarea id="extractedText" placeholder="النص المستخرج سيظهر هنا..." readonly></textarea>
         </div>
 
-        <!-- قسم صانع الفيديو بالذكاء الاصطناعي -->
+        <!-- قسم توليد الفيديو -->
         <div class="card">
-            <h2>توليد فيديو بالذكاء الاصطناعي (صوت وصورة)</h2>
-            <p style="margin-bottom: 1rem; font-size: 0.9rem; color: #64748b;">
-                اكتبي وصف المشهد أو السكريبت، وسيتم تجهيز الفيديو لاستخدامه في اليوتيوب أو منصات التواصل.
-            </p>
-            <textarea id="videoPrompt" placeholder="اكتبي وصف الفيديو هنا (مثال: فيديو تعليمي للأطفال عن الفضاء مع صوت راوي)..."></textarea>
-            <button onclick="generateVideo()">توليد الفيديو</button>
-            <div id="videoStatus" style="margin-top: 1rem; font-weight: bold;"></div>
+            <h2>توليد فيديو بالذكاء الاصطناعي</h2>
+            <p class="subtitle">(صوت وصورة)<br>اكتبي وصف المشهد أو السكريبت، وسيتم تجهيز الفيديو لاستخدامه في اليوتيوب أو منصات التواصل.</p>
+            
+            <textarea id="videoPrompt" placeholder="اكتبي وصف المشهد هنا..."></textarea>
+            
+            <button id="generateBtn" class="btn" onclick="generateVideo()">توليد الفيديو</button>
+            
+            <div id="statusMessage" class="status-msg"></div>
+
+            <div id="videoContainer" class="video-container">
+                <video id="videoResult" controls autoplay>
+                    متصفحك لا يدعم تشغيل الفيديو.
+                </video>
+            </div>
         </div>
-    </main>
+    </div>
 
     <footer>
-        <p>© 2026 Textify AI - جميع الحقوق محفوظة</p>
+        &copy; Textify AI 2026 - جميع الحقوق محفوظة
     </footer>
 
     <script>
-        function extractText() {
-            document.getElementById('extractedText').value = "جاري معالجة الصورة واستخراج النص...";
-            setTimeout(() => {
-                document.getElementById('extractedText').value = "تم استخراج النص بنجاح من الصورة!";
-            }, 1500);
-        }
+        // ضعي رابط الـ API الخاص بك هنا
+        const API_URL = "https://example.com/api/generate-video"; 
+        // ضعي مفتاح الـ API هنا إذا كان مطلوباً
+        const API_KEY = "YOUR_API_KEY_HERE"; 
 
-        function generateVideo() {
-            const prompt = document.getElementById('videoPrompt').value;
-            const status = document.getElementById('videoStatus');
-            if(!prompt) {
-                status.style.color = "red";
-                status.innerText = "يرجى كتابة وصف الفيديو أولاً!";
+        async function generateVideo() {
+            const promptInput = document.getElementById('videoPrompt');
+            const generateBtn = document.getElementById('generateBtn');
+            const statusMessage = document.getElementById('statusMessage');
+            const videoContainer = document.getElementById('videoContainer');
+            const videoResult = document.getElementById('videoResult');
+
+            const promptText = promptInput.value.trim();
+
+            if (!promptText) {
+                showStatus("يرجى كتابة وصف للفيديو أولاً.", "red");
                 return;
             }
-            status.style.color = "#2563eb";
-            status.innerText = "جاري معالجة السكريبت وتوليد المشاهد الصوتية والمرئية...";
+
+            // إعداد الواجهة عند بدء التوليد
+            generateBtn.disabled = true;
+            videoContainer.style.display = "none";
+            showStatus("جاري معالجة السكريبت وتوليد المشاهد الصوتية والمرئية...", "--primary-color");
+
+            try {
+                // إرسال الطلب إلى السيرفر
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        prompt: promptText
+                    })
+                });
+
+                // التحقق من استجابة السيرفر
+                if (!response.ok) {
+                    throw new Error(`خطأ من الخادم (${response.status}): تعذر التوليد حالياً.`);
+                }
+
+                const data = await response.json();
+
+                // التأكد من استلام رابط الفيديو
+                if (data && (data.video_url || data.url)) {
+                    const videoSrc = data.video_url || data.url;
+                    videoResult.src = videoSrc;
+                    videoContainer.style.display = "block";
+                    showStatus("تم توليد الفيديو بنجاح!", "green");
+                } else {
+                    throw new Error("لم يتم إرجاع رابط فيديو صالح من الخدمة.");
+                }
+
+            } catch (error) {
+                // معالجة الأخطاء لعرضها للمستخدم وعدم تعليق الشاشة
+                console.error("Video Generation Error:", error);
+                showStatus(`حدث خطأ: ${error.message}`, "red");
+            } finally {
+                // إعادة تفعيل الزر في كل الأحوال
+                generateBtn.disabled = false;
+            }
+        }
+
+        function showStatus(text, colorType) {
+            const statusMessage = document.getElementById('statusMessage');
+            statusMessage.innerText = text;
+            statusMessage.style.display = "block";
+            
+            if (colorType === "red") {
+                statusMessage.style.color = "var(--error-color)";
+            } else if (colorType === "green") {
+                statusMessage.style.color = "var(--success-color)";
+            } else {
+                statusMessage.style.color = "var(--primary-color)";
+            }
         }
     </script>
-
 </body>
 </html>
