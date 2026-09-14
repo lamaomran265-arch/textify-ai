@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Textify AI - منصة الذكاء الاصطناعي</title>
+    <title>Textify AI - صانع المحتوى والمشاهد</title>
     <!-- مكتبة استخراج النصوص OCR -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <style>
@@ -183,10 +183,10 @@
             <button class="btn" style="background-color: #475569;" onclick="copyText('extractedText')">نسخ النص المستخرج</button>
         </div>
 
-        <!-- قسم توليد المشاهد المخصصة -->
+        <!-- قسم توليد المشاهد بالذكاء الاصطناعي -->
         <div class="card">
-            <h2>توليد مشاهد الذكاء الاصطناعي</h2>
-            <p class="subtitle">حدد المقاس المطلوبة واكتب الوصف بالإنكليزية لتوليد وتحميل المشهد فوراً</p>
+            <h2>توليد مشاهد متحركة بالذكاء الاصطناعي</h2>
+            <p class="subtitle">حدد المقاس المطلوبة واكتب الوصف بالإنكليزية لتوليد المشهد المتحرك وتحميله</p>
             
             <label style="font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; display: block;">اختر المنصة / المقاس:</label>
             <select id="videoFormat">
@@ -194,9 +194,9 @@
                 <option value="youtube">يوتيوب عادي (أفقي 16:9)</option>
             </select>
 
-            <textarea id="videoPrompt" placeholder="اكتبي وصف المشهد هنا بالإنكليزية... (مثال: A glowing star falling in a magical forest)"></textarea>
+            <textarea id="videoPrompt" placeholder="اكتبي وصف المشهد بالإنكليزية... (مثال: A glowing star falling in a magical forest, 3d animation)"></textarea>
             
-            <button id="generateBtn" class="btn" onclick="generateRealVideo()">توليد المشهد الآن</button>
+            <button id="generateBtn" class="btn" onclick="generateRealVideo()">توليد المشهد المتحرك الآن</button>
             
             <div id="videoStatus" class="status-msg"></div>
 
@@ -204,7 +204,7 @@
             <div id="videoBox" class="media-box">
                 <div id="mediaContainer"></div>
                 <div style="padding: 10px;">
-                    <a id="downloadBtn" class="btn btn-download" href="#" download="generated-media.jpg" target="_blank">📥 تحميل إلى الهاتف</a>
+                    <a id="downloadBtn" class="btn btn-download" href="#" download="animation.gif" target="_blank">📥 تحميل إلى الهاتف</a>
                 </div>
             </div>
         </div>
@@ -247,7 +247,7 @@
             }
         }
 
-        // 2. توليد المشهد مع حماية من إعادة التوجيه
+        // 2. توليد المشهد المتحرك
         async function generateRealVideo() {
             const promptInput = document.getElementById('videoPrompt').value.trim();
             const format = document.getElementById('videoFormat').value;
@@ -266,21 +266,21 @@
             btn.disabled = true;
             videoBox.style.display = "none";
             status.style.color = "var(--primary-color)";
-            status.innerText = "جاري تصميم وبناء المشهد...";
+            status.innerText = "جاري تصميم وبناء المشهد المتحرك...";
 
             try {
-                const cleanPrompt = encodeURIComponent(promptInput);
-                let width = 1024;
-                let height = 576;
+                const cleanPrompt = encodeURIComponent(promptInput + ", animated gif style, moving animation");
+                let width = 800;
+                let height = 450;
                 if (format === 'tiktok') {
-                    width = 576;
-                    height = 1024;
+                    width = 450;
+                    height = 800;
                 }
 
                 const seed = Math.floor(Math.random() * 1000000);
-                const mediaUrl = `https://image.pollinations.ai/prompt/${cleanPrompt}?width=${width}&height=${height}&seed=${seed}&nologo=true&model=flux`;
+                const mediaUrl = `https://image.pollinations.ai/prompt/${cleanPrompt}?width=${width}&height=${height}&seed=${seed}&nologo=true`;
 
-                mediaContainer.innerHTML = `<img src="${mediaUrl}" style="width:100%; border-radius:8px; display:block;" alt="Generated Media">`;
+                mediaContainer.innerHTML = `<img src="${mediaUrl}" style="width:100%; border-radius:8px; display:block;" alt="Generated Animation">`;
                 
                 downloadBtn.href = mediaUrl;
 
